@@ -1222,15 +1222,31 @@ const CSS = `
 
 export default function SaladSpinner() {
   const [mode, setMode]           = useState("plan");
-  const [plan, setPlan]           = useState([]);
+  const [plan, setPlan]           = useState(() => {
+    try { return JSON.parse(localStorage.getItem('ss_plan') || 'null') || []; }
+    catch { return []; }
+  });
   const [vegMode, setVegMode]     = useState(new Set());
   const [makeIdx, setMakeIdx]     = useState(0);
-  const [haveItems, setHaveItems] = useState(new Map());
+  const [haveItems, setHaveItems] = useState(() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem('ss_have') || 'null');
+      return raw ? new Map(raw) : new Map();
+    } catch { return new Map(); }
+  });
   const [showHelp, setShowHelp]     = useState(false);
   const [showWildcard, setShowWildcard] = useState(false);
-  const [selectedDays, setSelectedDays] = useState(new Set(['Mon','Tue','Wed','Thu','Fri']));
+  const [selectedDays, setSelectedDays] = useState(() => {
+    try {
+      const raw = JSON.parse(localStorage.getItem('ss_days') || 'null');
+      return raw ? new Set(raw) : new Set(['Mon','Tue','Wed','Thu','Fri']);
+    } catch { return new Set(['Mon','Tue','Wed','Thu','Fri']); }
+  });
 
-  useEffect(() => { spin(); }, []);
+  useEffect(() => { if (!plan.length) spin(); }, []);
+  useEffect(() => { localStorage.setItem('ss_plan', JSON.stringify(plan)); }, [plan]);
+  useEffect(() => { localStorage.setItem('ss_have', JSON.stringify([...haveItems])); }, [haveItems]);
+  useEffect(() => { localStorage.setItem('ss_days', JSON.stringify([...selectedDays])); }, [selectedDays]);
   useEffect(() => {
     function onKey(e) {
       if (e.key === "Escape") {
