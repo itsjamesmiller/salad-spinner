@@ -1057,7 +1057,9 @@ function scoreProfile(profile, haveItems) {
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap');
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  .ss { min-height: 100vh; background: #F5F0E8; font-family: 'Outfit', sans-serif; color: #1C1C1C; }
+  html, body, #root { height: 100%; background: #F5F0E8; }
+  body::before { content: ""; position: fixed; inset: 0; background: #F5F0E8; z-index: -1; }
+  .ss { min-height: 100vh; min-height: 100dvh; background: #F5F0E8; font-family: 'Outfit', sans-serif; color: #1C1C1C; padding-bottom: env(safe-area-inset-bottom); }
 
   .ss-hd { background: #1E3A1E; padding: 20px 20px 0; position: sticky; top: 0; z-index: 10; }
   .ss-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #F5F0E8; letter-spacing: -0.3px; }
@@ -1083,8 +1085,8 @@ const CSS = `
   .thumb-detail { font-size: 11px; color: white; opacity: .8; line-height: 1.5; }
   .fab { position: fixed; bottom: 28px; right: 20px; z-index: 50; width: 52px; height: 52px; border-radius: 50%; background: #1E3A1E; border: none; color: #F5F0E8; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.25); display: flex; align-items: center; justify-content: center; transition: transform .15s, box-shadow .15s; }
   .fab:hover { transform: scale(1.08); box-shadow: 0 6px 18px rgba(0,0,0,.3); }
-  .wc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 60; display: flex; flex-direction: column; }
-  .wc-sheet { background: #F5F0E8; border-radius: 16px 16px 0 0; padding: 20px 16px 32px; flex: 1; overflow-y: auto; max-width: 600px; width: 100%; margin: auto auto 0; display: flex; flex-direction: column; }
+  .wc-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 60; display: flex; flex-direction: column; padding-top: 48px; }
+  .wc-sheet { background: #F5F0E8; border-radius: 16px 16px 0 0; padding: 20px 16px calc(32px + env(safe-area-inset-bottom)); flex: 1; overflow-y: auto; max-width: 600px; width: 100%; margin: auto auto 0; display: flex; flex-direction: column; }
   .wc-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
   .wc-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; }
   .wc-sub { font-size: 12px; color: #767676; margin-bottom: 16px; }
@@ -1198,7 +1200,15 @@ const CSS = `
   .dr-step-n { font-size: 11px; font-weight: 600; color: #1E3A1E; min-width: 14px; margin-top: 2px; flex-shrink: 0; }
 
 
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; display: flex; align-items: flex-end; }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; display: flex; align-items: flex-end; animation: fadeIn .25s ease; }
   .modal { background: #F5F0E8; border-radius: 16px 16px 0 0; padding: 24px 20px 32px; width: 100%; max-width: 600px; margin: 0 auto; }
   .modal-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
   .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 22px; }
@@ -1208,6 +1218,17 @@ const CSS = `
   .modal-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
   .modal-step-title { font-size: 14px; font-weight: 600; color: #1E3A1E; margin-bottom: 4px; }
   .modal-step-desc { font-size: 13px; color: #666; line-height: 1.5; }
+
+  .fb-banner { background: #E8F4E8; border-radius: 10px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: #1E5C1E; line-height: 1.5; }
+  .fb-field { margin-bottom: 16px; }
+  .fb-label { font-size: 12px; font-weight: 600; color: #444; margin-bottom: 8px; display: block; }
+  .fb-select { width: 100%; padding: 12px; border: 1.5px solid #D0C8B8; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 14px; color: #333; background: white; cursor: pointer; }
+  .fb-textarea { width: 100%; padding: 12px; border: 1.5px solid #D0C8B8; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 14px; color: #333; resize: vertical; min-height: 96px; box-sizing: border-box; }
+  .fb-textarea:focus, .fb-select:focus { outline: none; border-color: #1E3A1E; }
+  .fb-success { text-align: center; padding: 24px 0; }
+  .fb-success-icon { width: 48px; height: 48px; border-radius: 50%; background: #E8F4E8; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; }
+  .help-feedback { margin-top: 20px; padding-top: 16px; border-top: 1px solid #E5DFD3; font-size: 13px; color: #767676; text-align: center; }
+  .help-feedback-link { background: none; border: none; color: #1E3A1E; font-weight: 600; font-size: 13px; font-family: 'Outfit', sans-serif; cursor: pointer; text-decoration: underline; margin-left: 4px; padding: 0; }
   .help-btn { background: rgba(255,255,255,.15); border: none; color: rgba(255,255,255,.85); font-size: 14px; font-weight: 600; cursor: pointer; padding: 4px 8px; border-radius: 20px; line-height: 1; font-family: 'Outfit', sans-serif; transition: background .15s; }
   .help-btn:hover { background: rgba(255,255,255,.25); }
   .pill-row { display: flex; gap: 8px; overflow-x: auto; padding: 0 16px 8px; margin: 0 -16px 16px; scrollbar-width: none; }
@@ -1220,43 +1241,79 @@ const CSS = `
 
 // APP //
 
-export default function SaladSpinner() {
-  const [mode, setMode]           = useState("plan");
-  const [plan, setPlan]           = useState(() => {
-    try { return JSON.parse(localStorage.getItem('ss_plan') || 'null') || []; }
-    catch { return []; }
-  });
-  const [vegMode, setVegMode]     = useState(new Set());
-  const [makeIdx, setMakeIdx]     = useState(0);
-  const [haveItems, setHaveItems] = useState(() => {
-    try {
-      const raw = JSON.parse(localStorage.getItem('ss_have') || 'null');
-      return raw ? new Map(raw) : new Map();
-    } catch { return new Map(); }
-  });
-  const [showHelp, setShowHelp]     = useState(false);
-  const [showWildcard, setShowWildcard] = useState(false);
-  const [selectedDays, setSelectedDays] = useState(() => {
-    try {
-      const raw = JSON.parse(localStorage.getItem('ss_days') || 'null');
-      return raw ? new Set(raw) : new Set(['Mon','Tue','Wed','Thu','Fri']);
-    } catch { return new Set(['Mon','Tue','Wed','Thu','Fri']); }
-  });
 
-  useEffect(() => { if (!plan.length) spin(); }, []);
-  useEffect(() => { localStorage.setItem('ss_plan', JSON.stringify(plan)); }, [plan]);
-  useEffect(() => { localStorage.setItem('ss_have', JSON.stringify([...haveItems])); }, [haveItems]);
-  useEffect(() => { localStorage.setItem('ss_days', JSON.stringify([...selectedDays])); }, [selectedDays]);
+// PERSISTENCE //
+
+const STORAGE_KEY = "salad-spinner-v1";
+
+function saveState(state) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      plan: state.plan.map(s => s.name),
+      vegMode: [...state.vegMode],
+      haveItems: [...state.haveItems.entries()],
+      selectedDays: [...state.selectedDays],
+      makeIdx: state.makeIdx,
+    }));
+  } catch {}
+}
+
+function isFirstVisit() {
+  try { return !localStorage.getItem(STORAGE_KEY); } catch { return true; }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    const plan = (data.plan || [])
+      .map((name, i) => {
+        const p = PROFILES.find(p => p.name === name);
+        return p ? { ...p, day: SALAD_LABELS[i] } : null;
+      })
+      .filter(Boolean);
+    return {
+      plan,
+      vegMode: new Set(data.vegMode || []),
+      haveItems: new Map(data.haveItems || []),
+      selectedDays: new Set(data.selectedDays || ['Mon','Tue','Wed','Thu','Fri']),
+      makeIdx: data.makeIdx || 0,
+    };
+  } catch { return null; }
+}
+
+export default function SaladSpinner() {
+  const saved = loadState();
+
+  const [mode, setMode]           = useState("plan");
+  const [plan, setPlan]           = useState(saved?.plan || []);
+  const [vegMode, setVegMode]     = useState(saved?.vegMode || new Set());
+  const [makeIdx, setMakeIdx]     = useState(saved?.makeIdx || 0);
+  const [haveItems, setHaveItems] = useState(saved?.haveItems || new Map());
+  const [showHelp, setShowHelp]   = useState(() => isFirstVisit());
+  const [showWildcard, setShowWildcard] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [selectedDays, setSelectedDays] = useState(saved?.selectedDays || new Set(['Mon','Tue','Wed','Thu','Fri']));
+
+  // On first load, spin if no saved plan
+  useEffect(() => { if (!saved || saved.plan.length === 0) spin(); }, []);
   useEffect(() => {
     function onKey(e) {
       if (e.key === "Escape") {
-        if (showWildcard) setShowWildcard(false);
+        if (showFeedback) setShowFeedback(false);
+        else if (showWildcard) setShowWildcard(false);
         else if (showHelp) setShowHelp(false);
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [showWildcard, showHelp]);
+  }, [showWildcard, showHelp, showFeedback]);
+
+  // Persist state on every relevant change
+  useEffect(() => {
+    if (plan.length > 0) saveState({ plan, vegMode, haveItems, selectedDays, makeIdx });
+  }, [plan, vegMode, haveItems, selectedDays, makeIdx]);
 
   function spin(currentHaveItems, count) {
     const items = currentHaveItems || haveItems;
@@ -1357,6 +1414,10 @@ export default function SaladSpinner() {
           <WildcardModal onClose={() => setShowWildcard(false)} />
         )}
 
+        {showFeedback && (
+          <FeedbackModal onClose={() => setShowFeedback(false)} />
+        )}
+
         {showHelp && (
           <div className="modal-overlay" onClick={() => setShowHelp(false)}>
             <div className="modal" onClick={e => e.stopPropagation()}>
@@ -1395,6 +1456,11 @@ export default function SaladSpinner() {
                   <div className="modal-step-desc">Tap ✦ to make a one-off salad outside your weekly plan. Pick what you have and the app finds the best match. Good for clearing the fridge before a shop.</div>
                 </div>
               </div>
+              <div className="help-feedback">
+                Spotted a bug or have an idea?
+                <button className="help-feedback-link" onClick={() => { setShowHelp(false); setShowFeedback(true); }}>Send feedback</button>
+              </div>
+              <button className="copy-btn" style={{ marginTop: 16 }} onClick={() => setShowHelp(false)}>Got it, let's go</button>
             </div>
           </div>
         )}
@@ -1928,3 +1994,123 @@ function WildcardModal({ onClose }) {
     </div>
   );
 }
+
+// FEEDBACK //
+
+const FEEDBACK_ENDPOINT = "https://formspree.io/f/xeednpqg";
+
+function FeedbackModal({ onClose }) {
+  const [type, setType]       = useState("General feedback");
+  const [email, setEmail]     = useState("");
+  const [message, setMessage] = useState("");
+  const [sent, setSent]       = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError]     = useState("");
+
+  async function submit() {
+    if (!message.trim()) return;
+    setSending(true);
+    setError("");
+    const payload = { type, message, email: email.trim(), _subject: `Salad Spinner — ${type}` };
+
+    try {
+      const res = await fetch(FEEDBACK_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        setSent(true);
+      } else {
+        const data = await res.json().catch(() => null);
+        setError(data?.errors?.[0]?.message || "Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Couldn't connect. Check your network and try again.");
+    }
+    setSending(false);
+  }
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-hd">
+          <div className="modal-title">Send feedback</div>
+          <button className="modal-close" onClick={onClose} aria-label="Close">
+            <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+              <line x1="1" y1="1" x2="9" y2="9" stroke="#555" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="9" y1="1" x2="1" y2="9" stroke="#555" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        {sent ? (
+          <div className="fb-success">
+            <div className="fb-success-icon">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <polyline points="4,10 8,15 16,5" stroke="#1E5C1E" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+              </svg>
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 600, color: "#1E3A1E", marginBottom: 4 }}>Thanks so much</div>
+            <div style={{ fontSize: 13, color: "#666", lineHeight: 1.5 }}>
+              Your feedback genuinely helps shape where this goes next.
+            </div>
+            <button className="copy-btn" style={{ marginTop: 24 }} onClick={onClose}>Close</button>
+          </div>
+        ) : (
+          <>
+            <div className="fb-banner">
+              This is an early version of Salad Spinner and very much a work in progress. Every bit of feedback is read and appreciated, so don't hold back.
+            </div>
+
+            <div className="fb-field">
+              <label className="fb-label">What's this about?</label>
+              <select className="fb-select" value={type} onChange={e => setType(e.target.value)}>
+                <option>General feedback</option>
+                <option>Feature request</option>
+                <option>Found a bug</option>
+                <option>A recipe suggestion</option>
+                <option>Something else</option>
+              </select>
+            </div>
+
+            <div className="fb-field">
+              <label className="fb-label">Your email <span style={{ color: "#999", fontWeight: 400 }}>(optional)</span></label>
+              <input
+                type="email"
+                className="fb-select"
+                style={{ cursor: "text" }}
+                placeholder="So I can reply if needed"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="fb-field">
+              <label className="fb-label">Tell me more</label>
+              <textarea
+                className="fb-textarea"
+                placeholder="What's working, what's not, what you'd love to see..."
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+              />
+            </div>
+
+            {error && (
+              <div style={{ fontSize: 13, color: "#B71C1C", marginBottom: 12, lineHeight: 1.4 }}>{error}</div>
+            )}
+            <button
+              className="copy-btn"
+              style={{ marginTop: 4, opacity: message.trim() && !sending ? 1 : .4 }}
+              disabled={!message.trim() || sending}
+              onClick={submit}
+            >
+              {sending ? "Sending..." : "Send feedback"}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
