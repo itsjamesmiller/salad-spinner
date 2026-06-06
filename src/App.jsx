@@ -1062,8 +1062,9 @@ const CSS = `
   .ss { min-height: 100vh; min-height: 100dvh; background: #F5F0E8; font-family: 'Outfit', sans-serif; color: #1C1C1C; padding-bottom: env(safe-area-inset-bottom); }
 
   .ss-hd { background: #1E3A1E; padding: 20px 20px 0; position: sticky; top: 0; z-index: 10; }
-  .ss-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #F5F0E8; letter-spacing: -0.3px; }
-  .ss-sub { font-size: 10px; color: #7FAF7F; letter-spacing: 2.5px; text-transform: uppercase; margin-top: 2px; font-weight: 500; }
+  .ss-hd-inner { max-width: 600px; margin: 0 auto; position: relative; }
+  .ss-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: #F5F0E8; letter-spacing: -0.3px; text-align: center; }
+  .ss-sub { font-size: 10px; color: #7FAF7F; letter-spacing: 2.5px; text-transform: uppercase; margin-top: 2px; font-weight: 500; text-align: center; }
   .ss-tabs { display: flex; margin-top: 16px; }
   .ss-tab { flex: 1; padding: 8px 8px; background: none; border: none; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500; color: #7AAF7A; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; border-bottom: 2px solid transparent; transition: color .2s, border-color .2s; }
   .ss-tab.active { color: #F5F0E8; border-bottom-color: #7EC850; }
@@ -1383,17 +1384,17 @@ export default function SaladSpinner() {
       <style>{CSS}</style>
       <div className="ss">
         <div className="ss-hd">
-          <div className="ss-title">Salad Spinner 🥗</div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="ss-hd-inner">
+            <div className="ss-title">Salad Spinner 🥗</div>
             <div className="ss-sub">Weekly bowl planner</div>
-            <button className="help-btn" onClick={() => setShowHelp(true)} aria-label="How it works">?</button>
-          </div>
-          <div className="ss-tabs">
-            {[["plan","📅 Plan"],["prep","🛒 Prep"],["make","🍴 Make"]].map(([id, label]) => (
-              <button key={id} className={`ss-tab ${mode === id ? "active" : ""}`} onClick={() => setMode(id)}>
-                {label}
-              </button>
-            ))}
+            <button className="help-btn" onClick={() => setShowHelp(true)} aria-label="How it works" style={{ position: "absolute", top: 0, right: 0 }}>?</button>
+            <div className="ss-tabs">
+              {[["plan","📅 Plan"],["prep","🛒 Prep"],["make","🍴 Make"]].map(([id, label]) => (
+                <button key={id} className={`ss-tab ${mode === id ? "active" : ""}`} onClick={() => setMode(id)}>
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
